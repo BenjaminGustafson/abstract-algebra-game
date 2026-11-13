@@ -22,8 +22,8 @@ func _column_x(i: int) -> float:
 func _draw() -> void:
 	super._draw()
 	for i in n:
-		draw_string(ThemeDB.fallback_font, Vector2(_column_x(i), 30), str(i + 1))
-		draw_string(ThemeDB.fallback_font, Vector2(_column_x(i), 100), str(current.row[i]))
+		draw_string(ThemeDB.fallback_font, Vector2(_column_x(i)-5, 30), str(i + 1))
+		draw_string(ThemeDB.fallback_font, Vector2(_column_x(i)-5, 100), str(current.row[i]))
 	for i in n:
 		_draw_curve(_column_x(i), _column_x(current.row.find(i + 1)))
 		
@@ -35,3 +35,25 @@ func _draw_curve(x0: float, x1: float) -> void:
 	for k in 21:
 		pts.append(a.bezier_interpolate(Vector2(x0, 59), Vector2(x1, 59), d, k / 20.0))
 	draw_polyline(pts, Color.WHITE)
+
+func same(a, b) -> bool: return a.equals(b)
+func label(e) -> String: return e.cycle_label()
+
+static func _perms(items: Array) -> Array:
+	if items.size() <= 1: return [items]
+	var out := []
+	for i in items.size():
+		var rest := items.duplicate(); rest.remove_at(i)
+		for p in _perms(rest):
+			out.append([items[i]] + p)
+	return out
+
+func elements() -> Array:
+	var all := _perms(range(1, n + 1)).map(func(r): return Permutation.new(r))
+	all.sort_custom(func(a, b): return _key(a) < _key(b))
+	return all
+
+func _key(p: Permutation) -> Array:
+	var moved := 0
+	for i in n: moved += int(p.row[i] != i + 1)
+	return [moved, p.cycle_label().count("("), p.cycle_label()]

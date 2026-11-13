@@ -13,3 +13,6 @@ func set_current(e) -> void:
 	current = e
 	queue_redraw()
 	state_changed.emit(e)
+
+func same(a, b) -> bool: return a == b
+func label(e) -> String: return str(e)
