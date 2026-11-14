@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://djcidpkgkjnwp"]
+
+[ext_resource type="Script" uid="uid://5ro5neiergbd" path="res://test_scenes/test_dihedral_group.gd" id="1_clgg8"]
+
+[node name="TestDihedralGroup" type="Node2D" unique_id=831159980]
+script = ExtResource("1_clgg8")

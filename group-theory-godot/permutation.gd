@@ -30,3 +30,6 @@ func cycle_label() -> String:
 		s += "(" + " ".join(parts) + ")"
 	return s if s != "" else "e"
 	
+
+func then(o: Permutation) -> Permutation:
+	return Permutation.new(row.map(func(x): return o.row[x - 1]))
