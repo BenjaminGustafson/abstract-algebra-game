@@ -1,6 +1,9 @@
 extends Node2D
 
-var rooms := {Vector2i(6, 2): Room.new(SymmetricGroup.new(3))}
+var rooms := {
+	Vector2i(6, 2): Room.new(SymmetricGroup.new(3)),
+	Vector2i(6, 3): Room.new(DihedralGroup.new(3)),
+}
 var map := MapMenu.new()
 var current: Room
 

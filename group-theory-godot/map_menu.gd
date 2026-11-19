@@ -3,7 +3,7 @@ extends GridContainer
 
 signal room_chosen(coord: Vector2i)
 
-var unlocked := {Vector2i(6, 2): "S3"}
+var unlocked := {Vector2i(6, 2): "S3", Vector2i(6, 3): "D3"}
 
 func _ready() -> void:
 	columns = 20
