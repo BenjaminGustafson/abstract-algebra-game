@@ -7,8 +7,9 @@ var size := Vector2(200, 120)
 var current
 
 func _draw() -> void:
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.1, 0.1, 0.1))  # dark background, drawn first
 	draw_rect(Rect2(Vector2.ZERO, size), Color.WHITE, false)
-
+	
 func set_current(e) -> void:
 	current = e
 	queue_redraw()

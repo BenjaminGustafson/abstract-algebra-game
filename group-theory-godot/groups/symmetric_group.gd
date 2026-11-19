@@ -5,7 +5,7 @@ var n: int
 
 func _init(degree: int) -> void:
 	n = degree
-	size = Vector2(60 * n, 180)
+	size = Vector2(5, 5) * Workspace.CELL  # 5x5 cells, so the far edge lands on grid lines
 	current = Permutation.new(range(1, n + 1))
 
 func _ready() -> void:
@@ -34,7 +34,7 @@ func _draw_curve(x0: float, x1: float) -> void:
 	var pts := PackedVector2Array()
 	for k in 21:
 		pts.append(a.bezier_interpolate(Vector2(x0, 59), Vector2(x1, 59), d, k / 20.0))
-	draw_polyline(pts, Color.WHITE)
+	draw_polyline(pts, Color.WHITE, -1.0, false)
 
 func same(a, b) -> bool: return a.equals(b)
 func label(e) -> String: return e.cycle_label()
