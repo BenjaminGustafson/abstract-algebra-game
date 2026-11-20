@@ -22,8 +22,8 @@ func _column_x(i: int) -> float:
 func _draw() -> void:
 	super._draw()
 	for i in n:
-		draw_string(ThemeDB.fallback_font, Vector2(_column_x(i)-5, 30), str(i + 1))
-		draw_string(ThemeDB.fallback_font, Vector2(_column_x(i)-5, 100), str(current.row[i]))
+		draw_text(Vector2(_column_x(i)-5, 30), str(i + 1))
+		draw_text(Vector2(_column_x(i)-5, 100), str(current.row[i]))
 	for i in n:
 		_draw_curve(_column_x(i), _column_x(current.row.find(i + 1)))
 		
@@ -34,7 +34,7 @@ func _draw_curve(x0: float, x1: float) -> void:
 	var pts := PackedVector2Array()
 	for k in 21:
 		pts.append(a.bezier_interpolate(Vector2(x0, 59), Vector2(x1, 59), d, k / 20.0))
-	draw_polyline(pts, Color.WHITE, -1.0, false)
+	draw_polyline(pts, Color.WHITE, 1.5, true)  # positive width is required for antialiasing
 
 func same(a, b) -> bool: return a.equals(b)
 func label(e) -> String: return e.cycle_label()

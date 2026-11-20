@@ -1,7 +1,7 @@
 class_name Workspace
 extends Node2D
 
-const ZOOM_MIN := 1.0
+const ZOOM_MIN := 0.8
 const ZOOM_MAX := 4.0
 const ZOOM_STEP := 1.1  # scale factor per wheel notch
 const CELL := 40
@@ -50,6 +50,7 @@ func _zoom(factor: float) -> void:
 	content.scale = Vector2.ONE * clampf(content.scale.x * factor, ZOOM_MIN, ZOOM_MAX)
 	# After scaling, that point has drifted; shift content to put it back
 	content.position += (content.get_local_mouse_position() - before) * content.scale.x
+	content.get_children().map(func(c): c.queue_redraw())  # text depends on zoom
 	_clamp()  # keep the view inside the grid; also redraws
 	
 func _clamp() -> void:
