@@ -9,6 +9,13 @@ func _init(g: Group, elems: Array) -> void:
 		var b := Button.new()
 		b.custom_minimum_size.x = g.size.x / 2  # half width, leaving the sides free for wires
 		b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER  # centered in the list
+		for x in [-g.size.x / 8, b.custom_minimum_size.x + g.size.x / 8]:  # center of each side strip
+			var h := WireHookup.new(Vector2(x, 0))
+			h.hit_size.x = g.size.x / 4  # strip width: from the button edge to the list edge
+			b.add_child(h)  # child of the button, so it stays beside it
+			b.resized.connect(func():  # height is only known after layout
+				h.position.y = b.size.y / 2
+				h.hit_size.y = b.size.y)  # strip is as tall as the button
 		b.text = g.label(e)
 		b.pressed.connect(func(): g.apply(e))
 		add_child(b)
