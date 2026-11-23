@@ -10,11 +10,10 @@ var cells := Vector2i(40, 25)  # 40x25 cells keeps the area at 800x500 px
 var panning := false  # true while right mouse button is held
 
 var content := Node2D.new()  # holds zoom/offset; groups will be its children
+signal group_opened(g: Group)
 
 var dragged: Group  # group currently held, or null
 var grab := Vector2.ZERO  # cursor offset from the group's origin
-
-
 
 func _init() -> void:
 	add_child(content)
@@ -25,6 +24,16 @@ func _ready() -> void:
 	# Start at the middle of the clamp range, so there's equal slack on every side
 	content.position = (view - Vector2(cells * CELL) * content.scale.x) / 2
 
+# Places a group on the grid with its element buttons and an open button
+func add_group(g: Group, pos: Vector2) -> void:
+	g.position = pos
+	content.add_child(g)
+	g.overlay.add_child(ElementButtons.new(g, g.elements()))
+	var b := Button.new()
+	b.text = "open"
+	b.position = Vector2(0, -32)  # just above the group's top-left corner
+	b.pressed.connect(group_opened.emit.bind(g))
+	g.overlay.add_child(b)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
@@ -55,7 +64,7 @@ func _zoom(factor: float) -> void:
 	
 func _clamp() -> void:
 	var view := get_viewport_rect().size
-	var grid := (Vector2(cells)+Vector2(2,2)) * CELL * content.scale.x  # grid size on screen
+	var grid := (Vector2(cells)+Vector2(0,0)) * CELL * content.scale.x  # grid size on screen
 	# Corner must stay in [view - grid, 0] so the view never leaves the grid
 	content.position = content.position.clamp(view - grid, Vector2(0,0))
 	queue_redraw()  # dots are drawn through content's transform

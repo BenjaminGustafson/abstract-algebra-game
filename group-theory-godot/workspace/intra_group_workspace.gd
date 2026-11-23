@@ -8,13 +8,18 @@ const OPTIONS := ["Explorer", "Order", "Equivalence", "Generators"]
 var options := OptionTabs.new(OPTIONS)
 var panels := {}  # option name -> Node2D holding that option's content
 
+signal back_requested
+
+var back := Button.new()
+
+
 func _ready() -> void:
 	var view := get_viewport_rect().size
 	group.position = Vector2(view.x * 0.125, view.y / 2) - group.size / 2  # centered in left quarter
 	list.position = Vector2(view.x * 0.25, 0)
 	list.size = Vector2(view.x * 0.75, view.y)  # right 3/4, full height
 	options.position = Vector2(20, 20)  # top-left, above the panels
-
+	back.position = Vector2(20, view.y - 50)  # bottom-left
 
 func _init(g: Group) -> void:
 	group = g
@@ -31,7 +36,10 @@ func _init(g: Group) -> void:
 	panels["Explorer"].add_child(group)  # the group lives in the Explorer panel
 	options.option_chosen.connect(_show)
 	_show("Explorer")
-	
+	back.text = "back"
+	back.pressed.connect(back_requested.emit)
+	add_child(back)
+
 func _show(o: String) -> void:
 	for n in panels:
 		panels[n].visible = n == o  # hidden panels also stop receiving input

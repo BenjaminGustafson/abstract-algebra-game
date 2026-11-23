@@ -5,6 +5,21 @@ signal state_changed(element)
 
 var size := Vector2(200, 120)
 var current
+var overlay := Node2D.new()  # inter-group-only UI; the intra workspace hides it
+
+# Subclasses override _init and _ready, so attach the overlay on entering the tree
+func _enter_tree() -> void:
+	if overlay.get_parent() == null:
+		add_child(overlay)
+
+# Hides inter-group UI while the group is shown inside an intra-group workspace
+func enter_interior() -> void:
+	overlay.visible = false
+	overlay.process_mode = Node.PROCESS_MODE_DISABLED  # hidden hookups would still catch _input
+
+func exit_interior() -> void:
+	overlay.visible = true
+	overlay.process_mode = Node.PROCESS_MODE_INHERIT
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.1, 0.1, 0.1))  # dark background, drawn first
