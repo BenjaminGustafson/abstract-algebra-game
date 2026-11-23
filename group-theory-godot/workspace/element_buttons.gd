@@ -11,13 +11,19 @@ func _init(g: Group, elems: Array) -> void:
 		b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER  # centered in the list
 		for x in [-g.size.x / 8, b.custom_minimum_size.x + g.size.x / 8]:  # center of each side strip
 			var h := WireHookup.new(Vector2(x, 0))
+			h.group = g
+			h.element = e
 			h.hit_size.x = g.size.x / 4  # strip width: from the button edge to the list edge
 			b.add_child(h)  # child of the button, so it stays beside it
 			b.resized.connect(func():  # height is only known after layout
 				h.position.y = b.size.y / 2
 				h.hit_size.y = b.size.y)  # strip is as tall as the button
 		b.text = g.label(e)
-		b.pressed.connect(func(): g.apply(e))
+		b.pressed.connect(func():
+			g.apply(e)
+			for h in b.get_children():  # the hookups on this button
+				if h is WireHookup:
+					h.press_partner())
 		add_child(b)
 	var pad := Control.new()  # empty spacer so the last button clears the bottom border
 	pad.custom_minimum_size.y = 8

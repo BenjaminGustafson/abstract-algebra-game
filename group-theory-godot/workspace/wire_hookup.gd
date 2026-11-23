@@ -6,6 +6,9 @@ var hovered := false  # true while the cursor is over the circle
 var hit_size := Vector2.ZERO  # hover area, centered on the dot; set by the list
 var wiring := false  # true while a wire is being dragged from this hookup
 var partner: WireHookup  # other end of the permanent wire, or null
+var group: Group  # group this hookup's button belongs to
+var element  # element that button applies
+var wire: Wire  # permanent wire node (a child of one end), or null
 
 func _init(pos: Vector2) -> void:
 	position = pos
@@ -37,7 +40,9 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if wiring and not event.pressed:
 			_connect_to_hovered()
-		wiring = event.pressed and hovered and partner == null  # a connected hookup can't start a new wire		z_index = 1 if wiring else 0  # draw above other groups while wiring
+		if event.pressed and hovered:
+			remove_wire()  # clicking a connected hookup deletes its wire
+		wiring = event.pressed and hovered  # a freed hookup can start a new wire right away
 		if wiring:
 			get_viewport().set_input_as_handled()  # don't also start a group drag
 		queue_redraw()
@@ -49,6 +54,25 @@ func _connect_to_hovered() -> void:
 		if h != self and h.hovered and h.partner == null:
 			partner = h
 			h.partner = self
-			add_child(Wire.new(h))  # permanent wire, drawn from this dot to h's
+			wire = Wire.new(h)
+			h.wire = wire  # both ends know the wire, so either can remove it
+			add_child(wire)
 			h.queue_redraw()  # partner's color changes too
 			return
+
+# Applies the connected element to its own group, if wired
+func press_partner() -> void:
+	if partner:
+		partner.group.apply(partner.element)
+
+
+# Removes this hookup's wire and frees both ends
+func remove_wire() -> void:
+	if partner == null:
+		return
+	wire.queue_free()
+	partner.partner = null
+	partner.wire = null
+	partner.queue_redraw()  # partner goes back to white
+	partner = null
+	wire = null
